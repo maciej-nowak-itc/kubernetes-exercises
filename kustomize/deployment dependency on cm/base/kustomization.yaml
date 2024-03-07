@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+configMapGenerator:
+- name: clustercontext-config
+  envs:
+  - clustercontext-config.properties
+- name: service-config
+  envs:
+  - service-config.properties
+
+vars:
+- name: SERVICE_INSTANCE_NAME
+  objref:
+    kind: ConfigMap
+    name: service-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.service_instance_name
+- name: GENERAL_DNS
+  objref:
+    kind: ConfigMap
+    name: clustercontext-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.general_dns
