@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-html-folder
+  labels:
+    tier: data
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>My Web Page</title>
+    </head>
+    <body>
+      <h1>${GREETINGS}</h1>
+    </body>
+    </html>

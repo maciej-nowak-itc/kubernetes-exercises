@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      tier: web
+  template:
+    metadata:
+      labels:
+        tier: web
+    spec:
+      initContainers:
+      # Volume build on CM is read only. Naive method releasing the RO lock through hard copy from CM based volume
+      - name: release-volume
+        image: busybox
+        command: ['sh', '-c', 'cp -L -r /source/* /target']
+        volumeMounts:
+        - name: html-content-as-cm
+          mountPath: /source
+        - name: html-content
+          mountPath: /target
+      containers:
+      - name: nginx
+        image: maciejnowak/nginx-env-vars:1.0.0
+        ports:
+        - name: web-app-port
+          containerPort: 80
+        env:
+        - name: GREETINGS
+          valueFrom:
+            configMapKeyRef:
+              name: application-config-cm
+              key: greetings
+        volumeMounts:
+        - name: html-content
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html-content
+        emptyDir: {}
+      - name: html-content-as-cm
+        configMap:
+          name: nginx-html-folder
+          items:
+          - key: index.html
+            path: index.html
+            
