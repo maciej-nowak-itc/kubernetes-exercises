@@ -7,8 +7,8 @@ configMapGenerator:
 - name: application-config-cm
   envs:
   - application-config.properties
-generatorOptions:
-  disableNameSuffixHash: true
+#generatorOptions:
+#  disableNameSuffixHash: true
 
 resources:
 - deployment.yaml
